@@ -2,15 +2,17 @@
  * 手写一个promise
  */
 function Promise(fn) {
-    //需要一个成功时的回调
-    var doneCallback;
-    //一个实例的方法，用来注册异步事件
-    this.then = function (done) {
-        doneCallback = done;
-    }
+    var value = null,
+        callbacks = [];  //callbacks为数组，因为可能同时有很多个回调
 
-    function resolve() {
-        doneCallback();
+    this.then = function (onFulfilled) {
+        callbacks.push(onFulfilled);
+    };
+
+    function resolve(value) {
+        callbacks.forEach(function (callback) {
+            callback(value);
+        });
     }
 
     fn(resolve);
